@@ -1,8 +1,25 @@
 ------TASKS-----------------------------
-- add google analytics
 - update blog
+- add support for rest of farms
+- add Stablecoin from Ethereum prices - no is hardcode as 1.0
+- add google analytics
+- add popups to cards with description
 - add errors messages to the user during on chain analysis
-- add DAI price - no is hardcode as 1.0
+- returned value can't be null?
+export async function rpc_getProvidedLiquidity(
+     for (let i = 0; i < add_rm_reciepts.length; i++) {
+       const data = [];
+       const reciept = add_rm_reciepts[i]
++
+       // iterate logs inside receipt
+       for (let l = 0; l < reciept.logs.length; l++) {
+- 
+         const {log_on_contract, event} = _parseReceiptLog(reciept.logs[l]);
+-
+-        if (log_on_contract === null || event === null) return null;
++        if (log_on_contract === null || event === null) continue;
+
+- czy twój kod na pewno jest asynchroniczy?
 ------PERFORMANCE IDEAS------------------
 - make contract creation at the beggining in one place before user type account
 - make some optimal indexed data structure for storing interface fragments to avoid expensive iteration

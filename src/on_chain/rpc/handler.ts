@@ -148,20 +148,19 @@ function _validate_receipt(r: ethers.TransactionReceipt | null, lookup: Object) 
   return true;
 }
 
-function _validate_input(input: ethers.TransactionDescription | null) {
+function _validate_input(input: ethers.TransactionDescription | null, is_farm_with_wpls: boolean) {
   if (input === null) return false;
 
   // we look for abi fragment which is a function
   if (input?.fragment.type !== 'function') return false;
   
-  // we look for abi fragment function from below list
-  const is_fragment_supported = [
-    'addLiquidityETH', 
-    'removeLiquidityETHWithPermit',
-    'deposit', 
-    'withdraw',
-  ].find(item => item === input?.fragment.name);
+  // we look for abi fragment function from one of those lists:
+  const allowed_fragments = is_farm_with_wpls ? 
+  ['addLiquidityETH', 'removeLiquidityETHWithPermit', 'deposit', 'withdraw'] : 
+  ['addLiquidity', 'removeLiquidityWithPermit', 'deposit', 'withdraw']
   
+  const is_fragment_supported = allowed_fragments.find(item => item === input?.fragment.name);
+
   if (!is_fragment_supported) return false;
   return true;
 }
@@ -227,6 +226,7 @@ export async function rpc_getUserPoolReceipts(farm: Farm, pool_address: string, 
     lookup[farm.token_B_addres.toLowerCase()] = token_contracts_lookup[farm.token_B_addres.toLowerCase()];
     lookup = {...lookup, ...protocol_contracts_lookup}
 
+    const is_farm_with_wpls = farm.token_A_symbol === 'WPLS' || farm.token_B_symbol === 'WPLS' ? true : false;
     const txs = _filter_txs(user_txs, lookup);
 
     // collect receipts
@@ -245,7 +245,7 @@ export async function rpc_getUserPoolReceipts(farm: Farm, pool_address: string, 
         const iface = new ethers.Interface(abis[to_name]);
         const input = iface.parseTransaction({ data: txs[i].input });
 
-        ok = _validate_input(input)
+        ok = _validate_input(input, is_farm_with_wpls)
 
         if (!ok) continue;
 
@@ -300,10 +300,8 @@ export async function rpc_getProvidedLiquidity(
       const reciept = add_rm_reciepts[i]
       // iterate logs inside receipt
       for (let l = 0; l < reciept.logs.length; l++) {
- 
         const {log_on_contract, event} = _parseReceiptLog(reciept.logs[l]);
-
-        if (log_on_contract === null || event === null) return null;
+        if (log_on_contract === null || event === null) continue;
 
         if (event.name === 'Transfer') {
           const transfer = _parseTransfer(log_on_contract, event, user_address, pool_address);
@@ -314,6 +312,7 @@ export async function rpc_getProvidedLiquidity(
           data.push(transfer)
         }
       }
+
       const t_A = data.filter(item => item.symbol === token_A_symbol)[0]
       const t_B = data.filter(item => item.symbol === token_B_symbol)[0]
 

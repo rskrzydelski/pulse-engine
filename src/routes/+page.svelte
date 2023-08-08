@@ -204,7 +204,7 @@ import {
     </div>
 
     <div class="logo">
-      <p class="pulse-engine {on_chain === false ? 'active': ''}">Pulse Engine</p><span class="ver {on_chain === false ? 'active': ''}">version 0.0.1</span>
+      <p class="pulse-engine {on_chain === false ? 'active': ''}">Pulse Engine</p><span class="ver {on_chain === false ? 'active': ''}">version 0.0.2</span>
     </div>
 
     <form class="address-box {on_chain === true ? 'on-chain': ''}" on:submit|preventDefault={async (e) => await onSubmit(e)}>

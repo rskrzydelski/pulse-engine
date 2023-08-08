@@ -217,9 +217,11 @@
 <slot></slot>
 
 <div class="footer">
-  <!-- <a href="https://rskrzydelski.dev"> -->
-  <a href="">
+  <a href="https://rskrzydelski.dev">
     <img src="/footer.png" alt="rskrzydelski">
   </a>
-  <span>contact: datablock-studio@proton.me</span>
+  <span>telegram: </span>
+  <a href="https://t.me/+HP5p2Z33JatlZTBk">
+    <img src="/telegram.png" alt="telegram">
+  </a>
 </div>

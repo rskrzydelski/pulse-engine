@@ -1,4 +1,4 @@
-import { debug } from '../store';
+import { debug as debug_obj } from '../store';
 import { formatUnits } from 'ethers';
 
 import {
@@ -9,7 +9,7 @@ import {
     rpc_getUserPoolReceipts,
     rpc_getProvidedLiquidity,
 } from './rpc/handler';
-import { token_contracts, lp_token_contracts, protocol_contracts } from '../constants';
+import { abis, token_contracts, lp_token_contracts, lp_token_contracts_lookup, protocol_contracts } from '../constants';
 import type { GasPLSCost, Token, LpToken, DataBatch, MasterChefData, ProvidedLiquidity, PoolsReceipts, FirstLiquidityTimestamps } from '../types'
 
 export const pls_hold = (balance: number) => {
@@ -59,6 +59,11 @@ interface Icons {
     "PLP": "",
   }
 
+let debug: boolean;
+debug_obj.subscribe((value) => {
+  debug = value;
+});
+
 export async function account_getUserWalletTokensData(user_address: string): Promise<Token[]> {
     const token_addr_list = Object.values(token_contracts);
 
@@ -100,10 +105,26 @@ export async function account_getUserWalletLPsData(user_address: string): Promis
     return LP_tokens;
 }
 
+function _isFarmSupported(pool_address: string): boolean {
+  const pool_name = lp_token_contracts_lookup[pool_address.toLocaleLowerCase()];
+  if (abis[pool_name] === undefined) return false;
+  return true;
+}
+
 export async function account_masterChefUserFarmsData(user_address: string): Promise<MasterChefData> {
     const masterchef_data: MasterChefData = await rpc_getMasterChefUserFarmsData(user_address, protocol_contracts.PULSE_X_MASTER_CHEF);
 
     if (debug) console.debug("👨‍🌾 account_getMasterChefUserFarmsData: user farms data got from masterchef contract: ", masterchef_data);
+
+    const found_pool_addresses = Object.keys(masterchef_data);
+    for (let pool_idx = 0; pool_idx < found_pool_addresses.length; pool_idx++) {
+      const status = _isFarmSupported(found_pool_addresses[pool_idx]);
+      if (status === false) {
+        if (debug) console.debug(`😥 account_getMasterChefUserFarmsData: can't find abi for pool address: ${found_pool_addresses[pool_idx]}, I skip this farm...`);
+        delete masterchef_data[found_pool_addresses[pool_idx]]
+      }
+    }
+
     return masterchef_data;
 }
 
@@ -133,9 +154,13 @@ export function account_getFirstLiquidityTimestamp(
 
     // iterate farms
     for (let i = 0; i < pool_addresses.length; i++) {
+      const farm = masterchef_data[pool_addresses[i]];
       const receipts = pools_receipts[pool_addresses[i]]
       for (let r = 0; r < receipts.length; r++) {
-        if (receipts[r].input_data.fragment.name === 'addLiquidityETH') {
+        
+        const fr_name = farm.token_A_symbol === 'WPLS' || farm.token_B_symbol === 'WPLS' ? 'addLiquidityETH' : 'addLiquidity';
+
+        if (receipts[r].input_data.fragment.name === fr_name) {
           first_liquidity_timestamps[pool_addresses[i]] = receipts[r].timestamp
           break;
         }
@@ -156,7 +181,11 @@ export async function account_getUserProvidedLiquidity(
     for (let i = 0; i < pool_addresses.length; i++) {
       const farm = masterchef_data[pool_addresses[i]];
       const receipts = pools_receipts[pool_addresses[i]]
-      const add_rm_reciepts = receipts.filter(r => r.input_data?.fragment.name === 'removeLiquidityETHWithPermit').concat(receipts.filter(r => r.input_data?.fragment.name === 'addLiquidityETH'))
+
+      const add_fr_name = farm.token_A_symbol === 'WPLS' || farm.token_B_symbol === 'WPLS' ? 'addLiquidityETH' : 'addLiquidity';
+      const rm_fr_name = farm.token_A_symbol === 'WPLS' || farm.token_B_symbol === 'WPLS' ? 'removeLiquidityETHWithPermit' : 'removeLiquidityWithPermit';
+
+      const add_rm_reciepts = receipts.filter(r => r.input_data?.fragment.name === rm_fr_name).concat(receipts.filter(r => r.input_data?.fragment.name === add_fr_name))
 
       const provided_liquidity = await rpc_getProvidedLiquidity(
         add_rm_reciepts, 
@@ -171,7 +200,7 @@ export async function account_getUserProvidedLiquidity(
         continue;
       }
 
-      if (debug) console.debug(`👉 Provided ${farm.token_A_symbol} token amount ${formatUnits(provided_liquidity[farm.token_A_symbol], 18)} and ${farm.token_B_symbol} token amount ${formatUnits(provided_liquidity[farm.token_B_symbol], 18)}`);
+      if (debug) console.debug(`👉 account_getUserProvidedLiquidity: Provided ${farm.token_A_symbol} token amount ${formatUnits(provided_liquidity[farm.token_A_symbol], 18)} and ${farm.token_B_symbol} token amount ${formatUnits(provided_liquidity[farm.token_B_symbol], 18)}`);
       provided_liquidities[pool_addresses[i]] = provided_liquidity;
     }
 

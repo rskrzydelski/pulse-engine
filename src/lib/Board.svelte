@@ -11,8 +11,35 @@
     let price = new PricesCls();
     const unsubscribe_price = prices.subscribe((obj) => price = obj);
     onDestroy(unsubscribe_price);
-    const init_ratio = Number(formatUnits(data.provided_liquidity[data.farm.token_A_symbol], 18)) / Number(formatUnits(data.provided_liquidity[data.farm.token_B_symbol], 18))
-    const current_ratio = Number(formatUnits(data.farm.LP_tokens_distribution[data.farm.token_A_symbol], 18)) / Number(formatUnits(data.farm.LP_tokens_distribution[data.farm.token_B_symbol], 18))
+
+    let init_ratio = Number(formatUnits(data.provided_liquidity[data.farm.token_A_symbol], 18)) / Number(formatUnits(data.provided_liquidity[data.farm.token_B_symbol], 18))
+    let current_ratio = Number(formatUnits(data.farm.LP_tokens_distribution[data.farm.token_A_symbol], 18)) / Number(formatUnits(data.farm.LP_tokens_distribution[data.farm.token_B_symbol], 18))
+
+    if (init_ratio < 0.001) {
+      init_ratio = init_ratio * 100000;
+    }
+    if (init_ratio < 0.0001) {
+      init_ratio = init_ratio * 1000000;
+    }
+    if (init_ratio < 0.00001) {
+      init_ratio = init_ratio * 10000000;
+    }
+    if (init_ratio < 0.000001) {
+      init_ratio = init_ratio * 100000000;
+    }
+
+    if (current_ratio < 0.001) {
+      current_ratio = current_ratio * 100000;
+    }
+    if (current_ratio < 0.0001) {
+      current_ratio = current_ratio * 1000000;
+    }
+    if (current_ratio < 0.00001) {
+      current_ratio = current_ratio * 10000000;
+    }
+    if (current_ratio < 0.000001) {
+      current_ratio = current_ratio * 100000000;
+    }
 
     let options = getOptions(init_ratio.toFixed(2), current_ratio.toFixed(2));
 
@@ -109,8 +136,8 @@
       </tr>
       <tr>
         <th scope="row" class="cell">{data.farm.token_A_symbol} amount</th>
-        <td class="cell">{getUIFormatFromBigInt(data.provided_liquidity[data.farm.token_A_symbol])}</td>
-        <td class="cell">{getUIFormatFromBigInt(data.farm.LP_tokens_distribution[data.farm.token_A_symbol])}</td>
+        <td class="cell">{getUIFormatFromBigInt(data.provided_liquidity[data.farm.token_A_symbol], 4, data.farm.token_A_symbol === 'USDC'? 6: 18)}</td>
+        <td class="cell">{getUIFormatFromBigInt(data.farm.LP_tokens_distribution[data.farm.token_A_symbol], 4, data.farm.token_A_symbol === 'USDC'? 6: 18)}</td>
         {#if Number(data.farm.LP_tokens_distribution[data.farm.token_A_symbol]) - Number(data.provided_liquidity[data.farm.token_A_symbol]) >= 0}
           <td class="cell delta green">{getUIFormatFromBigInt(data.farm.LP_tokens_distribution[data.farm.token_A_symbol] - data.provided_liquidity[data.farm.token_A_symbol])}</td>
         {:else}

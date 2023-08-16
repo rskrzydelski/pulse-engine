@@ -225,7 +225,7 @@ import {
       <p class="pulse-engine {on_chain === false ? 'active': ''}">Pulse Engine</p><span class="ver {on_chain === false ? 'active': ''}">version 0.0.2</span>
     </div>
 
-    <form class="address-box {on_chain === true ? 'on-chain': ''}" on:submit|preventDefault={async (e) => await onSubmit(e)}>
+    <form class="address-input-box {on_chain === true ? 'on-chain': ''}" on:submit|preventDefault={async (e) => await onSubmit(e)}>
         <div>
           <input
             type="text"
@@ -288,8 +288,8 @@ import {
 }
 .pulse-box svg .pulse {
 	fill: none;
-	stroke: #0080ff;
-  filter: drop-shadow(0px 0px 5px #e619e6);
+	stroke: #F5A524;
+  filter: drop-shadow(0px 0px 5px #F31260);
 	stroke-width: 5;
 	stroke-linecap: round;
 	stroke-linejoin: miter;
@@ -369,11 +369,11 @@ import {
   overflow: hidden;
 }
 
-.address-box.on-chain {
+.address-input-box.on-chain {
   display: none;
 }
-.address-box {
-  margin: 10vh auto;
+.address-input-box {
+  margin: 5vh auto;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -381,13 +381,18 @@ import {
   width: 50vw;
 }
 
-
+.address-input-box button {
+  width: 20vw;
+}
 @media screen and (max-width: 768px) {
-  .address-box {
+  .address-input-box {
     flex-direction: column;
   }
+  .address-input-box button {
+    width: 40vw;
+  }
 }
-.address-box div input {
+.address-input-box div input {
   width: 40vw;
   padding: 10px;
   font-size: 12px;
@@ -398,21 +403,28 @@ import {
   color: white;
 }
 @media screen and (max-width: 480px) {
-  .address-box div input {
+  .address-input-box div input {
     width: 90vw;
   }
 }
-.address-box button {
+.address-input-box button {
   cursor: pointer;
   font-size: 12px;
-  padding: 10px;
+  padding: 5px;
   border-radius: 10px;
   background: var(--primary);
   text-transform: uppercase;
   background: transparent;
   color: white;
-  margin: 5px;
+  margin: 3px;
 }
+.address-input-box div input[disabled] {
+  filter: blur(1px);
+}
+.address-input-box button[disabled] {
+  filter: blur(1px);
+}
+
 .error {
   text-align: center;
   padding: 0;
@@ -427,7 +439,7 @@ import {
   justify-content: center;
   align-items: center;
   font-size: 18px;
-  margin-bottom: 5vh;
+  margin: 5vh 0 10vh 0;
 }
 @media screen and (max-width: 768px) {
   .address {
@@ -479,12 +491,5 @@ import {
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-}
-
-.address-box div input[disabled] {
-  display: none;
-}
-.address-box button[disabled] {
-  display: none;
 }
 </style>

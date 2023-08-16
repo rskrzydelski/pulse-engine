@@ -70,6 +70,13 @@
   height: 4vh;
   width: 4vh;
 }
+@media screen and (max-width: 800px) {
+  .item img {
+    height: 2vh;
+    width: 2vh;
+  }
+}
+
 .item p {
   height: 5vh;
   margin: 0 4px;

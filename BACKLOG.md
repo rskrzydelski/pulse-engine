@@ -1,7 +1,7 @@
 ------TASKS-----------------------------
 - update blog
-- handle scenario when you don't support particular farm
 - styling - responsive
+
 - add support for rest of farms
 - add popups to cards with description
 - add errors messages to the user during on chain analysis

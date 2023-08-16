@@ -4,6 +4,8 @@
 
   import { graph_getLatestBlock } from '../on_chain/subgraph/blocks'
   import { graph_getTokenPrice } from '../on_chain/subgraph/pulsex'
+  import {getStableFromEthereumPrices} from '../cp_api';
+
   import { token_contracts } from '../constants'
   import { 
     account_getUserWalletTokensData, 
@@ -41,10 +43,6 @@ import {
       $prices['WPLS'] = (1/Number(obj_pulsex.token_pls_price)) * Number(obj_pulsex.token_dollar_price);
       $prices['pHEX'] = obj_phex.token_dollar_price;
       $prices['INC'] = obj_inc.token_dollar_price;
-      // TODO: now it hardcoded - fetch proper data
-      $prices['DAI'] = 1.0;
-      $prices['USDC'] = 1.0;
-      $prices['USDT'] = 1.0;
     }, 60000);
 
     const block = await graph_getLatestBlock();
@@ -59,10 +57,30 @@ import {
     $prices['WPLS'] = (1 / Number(obj_pulsex.token_pls_price)) * Number(obj_pulsex.token_dollar_price);
     $prices['pHEX'] = obj_phex.token_dollar_price;
     $prices['INC'] = obj_inc.token_dollar_price;
-    // TODO: now it hardcoded - fetch proper data
-    $prices['DAI'] = 1.0;
-    $prices['USDC'] = 1.0;
-    $prices['USDT'] = 1.0;
+
+    const dai_price = await getStableFromEthereumPrices("dai");
+    if (typeof dai_price === 'number' && dai_price > 0.0) {
+      $prices['DAI'] = dai_price;
+    } else {
+      if ($debug) console.debug(`🚨 can't fetch dai price, I assign $1.0 by default.`);
+      $prices['DAI'] = 1.0;
+    }
+
+    const usdc_price = await getStableFromEthereumPrices("usdc");
+    if (typeof usdc_price === 'number' && usdc_price > 0.0) {
+      $prices['USDC'] = usdc_price;
+    } else {
+      if ($debug) console.debug(`🚨 can't fetch usdc price, I assign $1.0 by default.`);
+      $prices['USDC'] = 1.0;
+    }
+
+    const usdt_price = await getStableFromEthereumPrices("usdt");
+    if (typeof usdt_price === 'number' && usdt_price > 0.0) {
+      $prices['USDT'] = usdt_price;
+    } else {
+      if ($debug) console.debug(`🚨 can't fetch usdt price, I assign $1.0 by default.`);
+      $prices['USDT'] = 1.0;
+    }
 
     return () => {
       clearInterval(interval_1);

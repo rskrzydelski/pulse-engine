@@ -1,10 +1,14 @@
+------MVP-----------------
+- update blog 
+  * make graph responsive
+  * add remove liquidity
+  * add deposit with annotation - work in progress
+
 ------TASKS-----------------------------
 - update blog
-- styling - responsive
-
 - add support for rest of farms
 - add popups to cards with description
-- add errors messages to the user during on chain analysis
+- add logs/errors messages to the user during on chain analysis
 - returned value can't be null?
 export async function rpc_getProvidedLiquidity(
      for (let i = 0; i < add_rm_reciepts.length; i++) {

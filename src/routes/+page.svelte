@@ -251,18 +251,17 @@ import {
         </i>
       </div>
 
-      <p class="account-desc">💰 portfolio</p>
-      <div class='portfolio-layout'>          
+      <div class='box-layout'>
+        <div class="legend">💰 portfolio</div>
         <Portfolio />
       </div>
-      <br />
-      <br />
-      <p class="account-desc">👨‍🌾 farms</p>
-      {#each $user.data_batches as data}
-        <div class='board-layout'>
+
+      <div class='box-layout'>
+        <div class="legend">👨‍🌾 farms</div>
+        {#each $user.data_batches as data}
           <Board {data} />
-        </div>
-      {/each}
+        {/each}
+      </div>
     {/if}
   </div>
 
@@ -465,31 +464,29 @@ import {
     overflow:hidden;
 	}
 
-.account-desc {
-  text-align: center;
-}
-.portfolio-layout {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
+.box-layout {
   border: 1px solid gray;
   border-radius: 10px;
-  font-size: 18px;
-  margin: 0 auto;
-  position: relative;
-}
-
-.board-layout {
   width: 95vw;
-  margin: 0 auto;
-  border-radius: 10px;
-  border: 1px solid grey;  
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
+  margin: 2vh auto;
+  text-align: center;
+}
+.legend {
+  font-size: 24px;
+  position: relative;
+  top: -16px;
+  display: inline;
+  background: black;
+  padding: 5px;
+}
+@media screen and (max-width: 768px) {
+  .legend {
+    font-size: 18px;
+  }
+}
+@media screen and (max-width: 480px) {
+  .legend {
+    font-size: 16px;
+  }
 }
 </style>

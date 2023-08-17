@@ -103,7 +103,6 @@ img {
   font-size: 18px;
   margin: 8px 20px;
   padding: 6px;
-  border: 1px solid grey;
   border-radius: 10px;
   text-align: center;
   flex-basis: 16.66%;

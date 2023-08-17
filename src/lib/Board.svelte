@@ -98,14 +98,14 @@
     })
 </script>
 
-<div class="echart"><Chart {options} /></div>
-
 <div class="pool-metric">
   <p>{data.pool_address}</p>
   <p>{data.farm.token_A_symbol}-{data.farm.token_B_symbol}</p>
   <p>🔒 Deposited: {getUIFormatFromBigInt(data.farm.LP_staked)} LP</p>
   <p>🚜 To harvest: {getUIFormatFromBigInt(data.farm.pending_inc)} INC</p>
 </div>
+
+<div class="echart"><Chart {options} /></div>
 
 <div class="pool-metric">
   <p>⛽ fuel consumption: {getUIFormatNumber(formatUnits(data.gas_pls_cost))} PLS</p>
@@ -158,9 +158,7 @@
   </table>
 </div>
 
-<!-- <div class='board'>
-
-</div> -->
+<div class="separator"></div>
 
 <style>
    div {
@@ -169,7 +167,6 @@
     border-radius: 10px;
     margin: 10px;
     flex-basis: 28%;
-    min-height: 20vh;
     padding: 10px;
   }
   .echart {
@@ -180,7 +177,17 @@
   }
   .pool-metric {
     text-align: center;
-    flex-basis: 20%;
+  }
+
+  .table-container {
+    margin: 0 auto;
+  }
+  .separator {
+    margin: 2vh auto;
+    width: 95vw;
+    height: 10px;
+    border-radius: 0;
+    background: linear-gradient(45deg, #F5A524 -20%, #F31260 100%);
   }
 
 @media screen and (max-width: 768px) {

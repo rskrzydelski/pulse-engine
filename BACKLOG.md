@@ -3,6 +3,12 @@
   * make graph responsive
   * add remove liquidity
   * add deposit with annotation - work in progress
+- add support for rest of farms
+
+--------Marketing---------------
+- twitter accoount
+- annoucement on telegraph groups
+- make movie as instruction how to use tool
 
 ------TASKS-----------------------------
 - update blog

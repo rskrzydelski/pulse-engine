@@ -1,4 +1,5 @@
 <script>
+  import { getAddress } from 'ethers'
   import { onMount } from 'svelte';
   import { prices, basic_metrics, user, debug } from '../store';
 
@@ -114,6 +115,15 @@ import {
       errors.address = "";
     }
 
+    const user_address = fields.address.trim();
+
+    try {
+      const validated_address = getAddress(user_address);
+    } catch (error) {
+       valid = false;
+       errors.address = String(error);
+    }
+
     if (!valid) {
       setTimeout(() => {
         errors.address = "";
@@ -121,7 +131,6 @@ import {
       return;
     }
 
-    const user_address = fields.address.trim();
     fields.address = "";
 
     if ($debug) console.debug("🔗 start collecting on chain data... 🔗");

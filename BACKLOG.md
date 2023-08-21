@@ -1,9 +1,7 @@
 ------MVP-----------------
-- update blog 
-  * make graph responsive
-  * add remove liquidity
-  * add deposit with annotation - work in progress
-- add support for rest of farms
+[*] add support for rest of farms
+- add popups to cards with description, descriptions like supported pools, disclaimer 
+- add logs/errors messages to the user during on chain analysis
 
 --------Marketing---------------
 - twitter accoount
@@ -13,7 +11,7 @@
 ------TASKS-----------------------------
 - update blog
 - add support for rest of farms
-- add popups to cards with description
+- add popups to cards with description, descriptions like supported pools, disclaimer 
 - add logs/errors messages to the user during on chain analysis
 - returned value can't be null?
 export async function rpc_getProvidedLiquidity(
@@ -30,19 +28,17 @@ export async function rpc_getProvidedLiquidity(
 +        if (log_on_contract === null || event === null) continue;
 
 - czy twój kod na pewno jest asynchroniczy?
-------PERFORMANCE IDEAS------------------
-- make contract creation at the beggining in one place before user type account
-- make some optimal indexed data structure for storing interface fragments to avoid expensive iteration
-- use switch instead of multiple if statement
-
-------REFINEMENT---------------------------
 - implement autoformatter
 - implement pre-commit
 - fix typescript errors
 - handle todo's
 - implement tests
 - advanced debugging
+------PERFORMANCE IDEAS------------------
+- make contract creation at the beggining in one place before user type account
+- make some optimal indexed data structure for storing interface fragments to avoid expensive iteration
+- use switch instead of multiple if statement
 
 -------QUESTIONS-----------------------
 - what is PermittableToken? I see it in from Ethereum tokens
-- why masterchef contract in case of calling deposit function doesn't emit Event
+- why masterchef contract in case of calling deposit function doesn't emit Event?

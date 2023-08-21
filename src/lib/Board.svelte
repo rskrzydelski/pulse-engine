@@ -136,8 +136,8 @@
       </tr>
       <tr>
         <th scope="row" class="cell">{data.farm.token_A_symbol} amount</th>
-        <td class="cell">{getUIFormatFromBigInt(data.provided_liquidity[data.farm.token_A_symbol], 4, data.farm.token_A_symbol === 'USDC'? 6: 18)}</td>
-        <td class="cell">{getUIFormatFromBigInt(data.farm.LP_tokens_distribution[data.farm.token_A_symbol], 4, data.farm.token_A_symbol === 'USDC'? 6: 18)}</td>
+        <td class="cell">{getUIFormatFromBigInt(data.provided_liquidity[data.farm.token_A_symbol], 4, ['USDC', 'USDT'].includes(data.farm.token_A_symbol) ? 6: 18)}</td>
+        <td class="cell">{getUIFormatFromBigInt(data.farm.LP_tokens_distribution[data.farm.token_A_symbol], 4, ['USDC', 'USDT'].includes(data.farm.token_A_symbol) ? 6: 18)}</td>
         {#if Number(data.farm.LP_tokens_distribution[data.farm.token_A_symbol]) - Number(data.provided_liquidity[data.farm.token_A_symbol]) >= 0}
           <td class="cell delta green">{getUIFormatFromBigInt(data.farm.LP_tokens_distribution[data.farm.token_A_symbol] - data.provided_liquidity[data.farm.token_A_symbol])}</td>
         {:else}

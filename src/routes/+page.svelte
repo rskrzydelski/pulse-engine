@@ -7,7 +7,7 @@
   import { graph_getTokenPrice } from '../on_chain/subgraph/pulsex'
   import {getStableFromEthereumPrices} from '../cp_api';
 
-  import { token_contracts } from '../constants'
+  import { token_contracts, lp_token_contracts } from '../constants'
   import { 
     account_getUserWalletTokensData, 
     account_getUserWalletLPsData,
@@ -234,6 +234,14 @@ import {
       <p class="pulse-engine {on_chain === false ? 'active': ''}">Pulse Engine</p><span class="ver {on_chain === false ? 'active': ''}">version 0.0.2</span>
     </div>
 
+    <div class="info-box {on_chain === false ? 'active': ''}">
+      <div class="info">The app now supports the following pools: {Object.keys(lp_token_contracts).map(pool => pool + " ")}.</div>
+      <div class="info">This is a beta version, notice that it can have bugs and poor performance.</div>
+      <div class="info"> I will refine this tool step by step. I would appreciate your reporting any bugs, improvements,
+        or new future ideas on my telegram channel <div><a href="https://t.me/+HP5p2Z33JatlZTBk"><img src="/telegram.png" alt="telegram"></a></div>.
+      </div>
+    </div>
+
     <form class="address-input-box {on_chain === true ? 'on-chain': ''}" on:submit|preventDefault={async (e) => await onSubmit(e)}>
         <div>
           <input
@@ -337,6 +345,28 @@ import {
   display: block;
   color: grey;
   font-size: 10px;
+}
+
+.info-box {
+  display: none;
+}
+.info-box.active {
+  color: grey;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.info-box .info {
+  display: flex;
+  line-height: 5vh;
+  font-size: 10px;
+  text-align: center;
+}
+.info-box img {
+  height: 5vh;
+  width: 5vh;
 }
 
 .pulse-engine {

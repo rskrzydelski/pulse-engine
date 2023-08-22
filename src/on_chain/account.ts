@@ -56,6 +56,8 @@ interface Icons {
     "PLSX": "/pulsex.png",
     "INC": "/inc.png",
     "HEX": "/phex.png",
+    "ETH": "/eth.svg",
+    "WETH": "/eth.svg",
     "PLP": "",
   }
 
@@ -121,6 +123,7 @@ export async function account_masterChefUserFarmsData(user_address: string): Pro
       const status = _isFarmSupported(found_pool_addresses[pool_idx]);
       if (status === false) {
         if (debug) console.debug(`😥 account_getMasterChefUserFarmsData: can't find abi for pool address: ${found_pool_addresses[pool_idx]}, I skip this farm...`);
+        if (debug) console.debug(`🚨 I perform rollback for this farm.`);
         delete masterchef_data[found_pool_addresses[pool_idx]]
       }
     }
@@ -186,14 +189,22 @@ export async function account_getUserProvidedLiquidity(
       const rm_fr_name = farm.token_A_symbol === 'WPLS' || farm.token_B_symbol === 'WPLS' ? 'removeLiquidityETHWithPermit' : 'removeLiquidityWithPermit';
 
       const add_rm_reciepts = receipts.filter(r => r.input_data?.fragment.name === rm_fr_name).concat(receipts.filter(r => r.input_data?.fragment.name === add_fr_name))
+      let provided_liquidity = null
 
-      const provided_liquidity = await rpc_getProvidedLiquidity(
-        add_rm_reciepts, 
-        user_address,
-        pool_addresses[i],
-        farm.token_A_symbol,
-        farm.token_B_symbol,
-      );
+      try {
+        provided_liquidity = await rpc_getProvidedLiquidity(
+          add_rm_reciepts, 
+          user_address,
+          pool_addresses[i],
+          farm.token_A_symbol,
+          farm.token_B_symbol,
+        );
+      } catch (error) {
+        if (debug) console.debug(`🚨 can't get provided liquidity for: ${farm.token_A_symbol + "-" + farm.token_B_symbol}.`);
+        console.error(error);
+        if (debug) console.debug(`🚨 I perform rollback for this farm.`);
+        delete masterchef_data[pool_addresses[i]]
+      }
 
       if (provided_liquidity === null) {
         // TODO: log warrning

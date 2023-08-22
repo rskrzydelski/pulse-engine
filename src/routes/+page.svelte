@@ -247,8 +247,11 @@ import {
     <div class="info-box {on_chain === false ? 'active': ''}">
       <div class="info">The app now supports the following pools: {Object.keys(lp_token_contracts).map(pool => pool.replace("_POOL", "") + " ")}.</div>
       <div class="info">This is a beta version, notice that it can have bugs and poor performance.</div>
-      <div class="info"> I will refine this tool step by step. I would appreciate your reporting any bugs, improvements,
-        or new future ideas on my telegram channel <div><a href="https://t.me/+HP5p2Z33JatlZTBk"><img src="/telegram.png" alt="telegram"></a></div>.
+      <div class="info"> I will refine this tool step by step.</div>
+      <div class="info">I would appreciate your reporting any bugs, improvements, or new future ideas on my telegram channel 
+        <div>
+          <a href="https://t.me/+HP5p2Z33JatlZTBk"><img src="/telegram.png" alt="telegram"></a>
+        </div>
       </div>
     </div>
 
@@ -365,19 +368,37 @@ import {
   padding: 10px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
 }
 .info-box .info {
   display: flex;
   line-height: 5vh;
-  height: 20px;
   font-size: 10px;
   text-align: center;
 }
 .info-box img {
   height: 5vh;
   width: 5vh;
+}
+@media screen and (max-width: 480px) {
+  .info-box.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .info-box .info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 30px;
+    font-size: 10px;
+    text-align: center;
+  }
+  .info-box img {
+    height: 5vh;
+    width: 5vh;
+  }
 }
 
 .pulse-engine {

@@ -93,14 +93,22 @@
     })
 </script>
 
+<div class="separator">
+  <p>{data.farm.token_A_symbol}-{data.farm.token_B_symbol}</p>
+</div>
+
 <div class="pool-metric">
   <p>{data.pool_address}</p>
-  <p>{data.farm.token_A_symbol}-{data.farm.token_B_symbol}</p>
   <p>🔒 Deposited: {getUIFormatFromBigInt(data.farm.LP_staked)} LP</p>
   <p>🚜 To harvest: {getUIFormatFromBigInt(data.farm.pending_inc)} INC</p>
 </div>
 
-<div class="echart"><Chart {options} /></div>
+<div class="echart">
+  <Chart {options} />
+  <div>
+    <p class='info'>indicator in the middle means no impermanent loss, more deviation, more impermanent loss.</p>
+  </div>
+</div>
 
 <div class="pool-metric">
   <p>⛽ fuel consumption: {getUIFormatNumber(formatUnits(data.gas_pls_cost))} PLS</p>
@@ -186,8 +194,6 @@
   </table>
 </div>
 
-<div class="separator"></div>
-
 <style>
    div {
     font-size: 14px;
@@ -198,6 +204,7 @@
     padding: 10px;
   }
   .echart {
+    position: relative;
     z-index: 6;
     overflow: hidden;
     height: 50vh;
@@ -211,12 +218,36 @@
     margin: 0 auto;
   }
   .separator {
-    margin: 2vh auto;
-    width: 95vw;
-    height: 10px;
-    border-radius: 0;
-    background: linear-gradient(45deg, #F5A524 -20%, #F31260 100%);
+  background-size: 100%;
+  background-clip: text;
+  font-size: 18px;
+  color: #ecedee;
+  -webkit-background-clip: text;
+    -moz-background-clip: text;
+    -webkit-text-fill-color: transparent; 
+    -moz-text-fill-color: transparent;
+  background-image: linear-gradient(45deg, #F5A524 -20%, #F31260 100%);
+  text-transform: uppercase;
+  font-weight: bold;
+  font-style: italic;
+}
+
+.info {
+  position: absolute;
+  top: 85%;
+  left: 50%;
+  transform: translateX(-50%);
+  color: grey;
+  font-size: 12px;
+}
+@media screen and (max-width: 480px) {
+  .info {
+    top: 83%;
+    left: 2%;
+    transform: translateX(0%);
   }
+}
+
 
 @media screen and (max-width: 768px) {
   div {
@@ -235,6 +266,10 @@
   table {
     color: white;
     background-color: black;
+  }
+  th {
+    text-align: center;
+    border-left: 1px solid white;
   }
   tr {
     border: 1px solid white;

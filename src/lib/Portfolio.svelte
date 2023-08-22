@@ -46,6 +46,7 @@
         <img src={icons[token.symbol]} alt={icons[token.symbol]}/>
       </div>
     {/each}
+    <p class='info'>only wallet</p>
   </div>
 
   <div class="status-box">

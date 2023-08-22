@@ -1,7 +1,5 @@
 ------MVP-----------------
-[*] add support for rest of farms
-- add popups to cards with description, descriptions like supported pools, disclaimer 
-- add logs/errors messages to the user during on chain analysis
+[*] add logs/errors messages to the user during on chain analysis
 
 --------Marketing---------------
 - twitter accoount

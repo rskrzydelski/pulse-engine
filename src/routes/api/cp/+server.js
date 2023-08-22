@@ -6,6 +6,7 @@ const tickers = {
     dai: 'dai-dai',
     usdc: 'usdc-usd-coin',
     usdt: 'usdt-tether',
+    eth: 'eth-ethereum',
 }
 
 export async function GET({ url }) {

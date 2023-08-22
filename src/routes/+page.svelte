@@ -5,7 +5,7 @@
 
   import { graph_getLatestBlock } from '../on_chain/subgraph/blocks'
   import { graph_getTokenPrice } from '../on_chain/subgraph/pulsex'
-  import {getStableFromEthereumPrices} from '../cp_api';
+  import {getPriceFromEthereum} from '../cp_api';
 
   import { token_contracts, lp_token_contracts } from '../constants'
   import { 
@@ -59,7 +59,7 @@ import {
     $prices['pHEX'] = obj_phex.token_dollar_price;
     $prices['INC'] = obj_inc.token_dollar_price;
 
-    const dai_price = await getStableFromEthereumPrices("dai");
+    const dai_price = await getPriceFromEthereum("dai");
     if (typeof dai_price === 'number' && dai_price > 0.0) {
       $prices['DAI'] = dai_price;
     } else {
@@ -67,7 +67,7 @@ import {
       $prices['DAI'] = 1.0;
     }
 
-    const usdc_price = await getStableFromEthereumPrices("usdc");
+    const usdc_price = await getPriceFromEthereum("usdc");
     if (typeof usdc_price === 'number' && usdc_price > 0.0) {
       $prices['USDC'] = usdc_price;
     } else {
@@ -75,12 +75,22 @@ import {
       $prices['USDC'] = 1.0;
     }
 
-    const usdt_price = await getStableFromEthereumPrices("usdt");
+    const usdt_price = await getPriceFromEthereum("usdt");
     if (typeof usdt_price === 'number' && usdt_price > 0.0) {
       $prices['USDT'] = usdt_price;
     } else {
       if ($debug) console.debug(`🚨 can't fetch usdt price, I assign $1.0 by default.`);
       $prices['USDT'] = 1.0;
+    }
+
+    const eth_price = await getPriceFromEthereum("eth");
+    if (typeof eth_price === 'number' && eth_price > 0.0) {
+      $prices['ETH'] = eth_price;
+      $prices['WETH'] = eth_price;
+    } else {
+      if ($debug) console.debug(`🚨 can't fetch eth price, I assign NaN by default.`);
+      $prices['ETH'] = NaN;
+      $prices['WETH'] = NaN;
     }
 
     return () => {

@@ -73,6 +73,15 @@
       il_percent = ((1 - value_in_the_pool / value_when_hold) * 100).toFixed(3);
     }
 
+    let token_A_decimals = 18;
+    let token_B_decimals = 18;
+    
+
+    if (['USDC', 'USDT'].includes(data.farm.token_A_symbol)) token_A_decimals = 6;
+    if (['USDC', 'USDT'].includes(data.farm.token_B_symbol)) token_B_decimals = 6;
+    if (data.farm.token_A_symbol === 'pHEX') token_A_decimals = 8;
+    if (data.farm.token_B_symbol === 'pHEX') token_B_decimals = 8;
+
     onMount(() => {
           const interval_1 = setInterval(updatePoolDuration, 1000);
           const interval_2 = setInterval(updateCalculations, 60000);
@@ -124,25 +133,25 @@
         <th scope="row" class="cell">{data.farm.token_A_symbol} amount</th>
         <td class="cell">
           {getUIFormatFromBigInt(
-            data.provided_liquidity[data.farm.token_A_symbol], 4, ['USDC', 'USDT'].includes(data.farm.token_A_symbol) ? 6: 18)
+            data.provided_liquidity[data.farm.token_A_symbol], 4, token_A_decimals)
           }
         </td>
         <td class="cell">
           {getUIFormatFromBigInt(
-            data.farm.LP_tokens_distribution[data.farm.token_A_symbol], 4, ['USDC', 'USDT'].includes(data.farm.token_A_symbol) ? 6: 18)
+            data.farm.LP_tokens_distribution[data.farm.token_A_symbol], 4, token_A_decimals)
           }
         </td>
 
         {#if Number(data.farm.LP_tokens_distribution[data.farm.token_A_symbol]) - Number(data.provided_liquidity[data.farm.token_A_symbol]) >= 0}
           <td class="cell delta green">
             {getUIFormatFromBigInt(
-              data.farm.LP_tokens_distribution[data.farm.token_A_symbol] - data.provided_liquidity[data.farm.token_A_symbol], 4, ['USDC', 'USDT'].includes(data.farm.token_A_symbol) ? 6: 18)
+              data.farm.LP_tokens_distribution[data.farm.token_A_symbol] - data.provided_liquidity[data.farm.token_A_symbol], 4, token_A_decimals)
             }
           </td>
         {:else}
           <td class="cell delta red">
             {getUIFormatFromBigInt(
-              data.farm.LP_tokens_distribution[data.farm.token_A_symbol] - data.provided_liquidity[data.farm.token_A_symbol], 4, ['USDC', 'USDT'].includes(data.farm.token_A_symbol) ? 6: 18)
+              data.farm.LP_tokens_distribution[data.farm.token_A_symbol] - data.provided_liquidity[data.farm.token_A_symbol], 4, token_A_decimals)
             }
           </td>
         {/if}
@@ -151,24 +160,24 @@
         <th scope="row" class="cell">{data.farm.token_B_symbol} amount</th>
         <td class="cell">
           {getUIFormatFromBigInt(
-            data.provided_liquidity[data.farm.token_B_symbol], 4, ['USDC', 'USDT'].includes(data.farm.token_B_symbol) ? 6: 18)
+            data.provided_liquidity[data.farm.token_B_symbol], 4, token_B_decimals)
           }
         </td>
         <td class="cell">
           {getUIFormatFromBigInt(
-            data.farm.LP_tokens_distribution[data.farm.token_B_symbol], 4, ['USDC', 'USDT'].includes(data.farm.token_B_symbol) ? 6: 18)
+            data.farm.LP_tokens_distribution[data.farm.token_B_symbol], 4, token_B_decimals)
           }
         </td>
         {#if Number(data.farm.LP_tokens_distribution[data.farm.token_B_symbol]) - Number(data.provided_liquidity[data.farm.token_B_symbol]) >= 0}
           <td class="cell delta green">
             {getUIFormatFromBigInt(
-              data.farm.LP_tokens_distribution[data.farm.token_B_symbol] - data.provided_liquidity[data.farm.token_B_symbol], 4, ['USDC', 'USDT'].includes(data.farm.token_B_symbol) ? 6: 18)
+              data.farm.LP_tokens_distribution[data.farm.token_B_symbol] - data.provided_liquidity[data.farm.token_B_symbol], 4, token_B_decimals)
             }
           </td>
         {:else}
           <td class="cell delta red">
             {getUIFormatFromBigInt(
-              data.farm.LP_tokens_distribution[data.farm.token_B_symbol] - data.provided_liquidity[data.farm.token_B_symbol], 4, ['USDC', 'USDT'].includes(data.farm.token_B_symbol) ? 6: 18)
+              data.farm.LP_tokens_distribution[data.farm.token_B_symbol] - data.provided_liquidity[data.farm.token_B_symbol], 4, token_B_decimals)
             }
           </td>
         {/if}

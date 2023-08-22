@@ -34,6 +34,21 @@ export async function rpc_getTokenWalletData(account_address: string, contract_a
   return token;
 }
 
+function _ifpHEXCustomizeSymbol(token_A: string, token0_addr: string, token_B: string, token1_addr: string) {
+  // convert HEX symbol to pHEX is it is on pulsechain - it is needed because internal transactions pHEX symbol is used.
+  // if not HEX then return unchanged
+  if (token_A === 'HEX') {
+    const token = token_contracts_lookup[token0_addr.toLowerCase()];
+    token_A = token.replace("_TOKEN", "");
+  }
+  if (token_B === 'HEX') {
+    const token = token_contracts_lookup[token1_addr.toLowerCase()];
+    token_B = token.replace("_TOKEN", "");
+  }
+
+  return [token_A, token_B];
+}
+
 export async function rpc_getLPContractData(account_address: string, contract_address: string) {
   const contract = new ethers.Contract(contract_address, abis.PLSX_WPLS_V1_POOL, provider);
   const balance = await contract.balanceOf(account_address);
@@ -44,11 +59,13 @@ export async function rpc_getLPContractData(account_address: string, contract_ad
   const _con_0 = new ethers.Contract(_token0_addr, abis.TOKEN, provider);
   const _con_1 = new ethers.Contract(_token1_addr, abis.TOKEN, provider);
 
-  const token_A = await _con_0.symbol();
-  const token_B = await _con_1.symbol();
+  let token_A = await _con_0.symbol();
+  let token_B = await _con_1.symbol();
 
   const total_supply = await contract.totalSupply();
   const reserves = await contract.getReserves();
+
+  [token_A, token_B] = _ifpHEXCustomizeSymbol(token_A, _token0_addr, token_B, _token1_addr);
 
   return {
     balance: balance,

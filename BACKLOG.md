@@ -1,6 +1,5 @@
 ------MVP-----------------
-[*] add logs/errors messages to the user during on chain analysis
-
+DONE!
 --------Marketing---------------
 - twitter accoount
 - annoucement on telegraph groups

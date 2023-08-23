@@ -263,7 +263,7 @@ import {
     </div>
 
     <div class="logo">
-      <p class="pulse-engine {on_chain === false ? 'active': ''}">Pulse Engine</p><span class="ver {on_chain === false ? 'active': ''}">version 0.0.2</span>
+      <p class="pulse-engine {on_chain === false ? 'active': ''}">Pulse Engine</p><span class="ver {on_chain === false ? 'active': ''}">version 0.0.3</span>
     </div>
 
     <div class="info-box {on_chain === false ? 'active': ''}">
@@ -283,7 +283,7 @@ import {
             type="text"
             id="address"
             bind:value={fields.address}
-            placeholder="Type your address"
+            placeholder="just type your public address to start analysis."
             aria-label="Address"
             disabled={data_collected}
             required
@@ -421,7 +421,17 @@ import {
 }
 @media screen and (max-width: 820px) {
   .info-box.active {
-    
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .info-box .info {
+    line-height: 2vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    min-width: 95vw;
   }
 }
 @media screen and (max-width: 480px) {
@@ -436,7 +446,6 @@ import {
     flex-direction: column;
     align-items: center;
     line-height: 30px;
-    font-size: 10px;
     text-align: center;
   }
   .info-box img {

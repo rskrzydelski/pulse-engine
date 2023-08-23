@@ -22,3 +22,4 @@ export const basic_metrics = writable(new BasicMetricsCls());
 export const prices = writable(new PricesCls());
 export const user = writable(new UserCls());
 export const debug = writable(true);
+export const diagnosis = writable("");

@@ -138,12 +138,6 @@
   margin-left: 10px;
 }
 
-.github {
-  height: 3vh;
-  width: 3vh;
-  margin: 20px;
-}
-
 @media screen and (max-width: 768px) {
   .container {
     font-size: 16px;

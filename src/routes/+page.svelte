@@ -1,11 +1,13 @@
 <script>
   import { getAddress } from 'ethers'
   import { onMount } from 'svelte';
-  import { prices, basic_metrics, user, debug } from '../store';
+  import Typewriter from 'svelte-typewriter'
+
+  import { prices, basic_metrics, user, debug, diagnosis } from '../store';
 
   import { graph_getLatestBlock } from '../on_chain/subgraph/blocks'
   import { graph_getTokenPrice } from '../on_chain/subgraph/pulsex'
-  import {getPriceFromEthereum} from '../cp_api';
+  import { getPriceFromEthereum } from '../cp_api';
 
   import { token_contracts, lp_token_contracts } from '../constants'
   import { 
@@ -29,6 +31,7 @@ import {
   let user_data_update_timer;
 
   onMount(async () => {
+  
     const interval_1 = setInterval(async () => {
       const block = await graph_getLatestBlock();
       $basic_metrics.current_block = block.number;
@@ -146,21 +149,33 @@ import {
     if ($debug) console.debug("🔗 start collecting on chain data... 🔗");
     on_chain = true;
 
+    $diagnosis = "🪙 collecting wallet tokens...";
     const tokens = await account_getUserWalletTokensData(user_address); // tokens which is not stored in farms
+
+    $diagnosis = "🪙 collecting LP tokens which are not staked...";
     const LP_tokens = await account_getUserWalletLPsData(user_address); // lp tokens which is not stored in farms
+
+    $diagnosis = "👨‍🌾 collecting farms data from masterchef...";
     const masterchef_data = await account_masterChefUserFarmsData(user_address); // farms data where user is participated
 
     const user_tx = await fetch(`api/user_tx?address=${user_address}`);
     const user_tx_json = await user_tx.json();
     const user_txs = user_tx_json.user_tx;
 
+    $diagnosis = "📜 collecting reciepts related to user account...";
     const pools_receipts = await account_getRelevantReciepts(masterchef_data, user_txs);
+
+    $diagnosis = "👉 collecting provided liquidity by the user...";
     const prov_liquidities = await account_getUserProvidedLiquidity(masterchef_data, pools_receipts, user_address);
+
+    $diagnosis = "⌚ collecting first liquidity timestamps...";
     const first_liquidity_timestamps = account_getFirstLiquidityTimestamp(masterchef_data, pools_receipts);
 
+    $diagnosis = "📈 calculate user wallet value and ⛽ gas consumption...";
     const wallet = calc_userWalletValue(tokens, $prices);
     const gas_pls_cost = calc_gasConsumption(pools_receipts);
   
+    $diagnosis = "📚 collecting gather data to data batch...";
     const data_batches = account_collectDataBatch(
       masterchef_data, 
       prov_liquidities, 
@@ -222,6 +237,7 @@ import {
     // clear timers
     clearInterval(user_data_update_timer);
   }
+
 </script>
 
   <div class="dashboard">
@@ -238,6 +254,12 @@ import {
             170,100 210,100 	"/>
           </g>
       </svg>
+    </div>
+
+    <div class="engine-diagnosis {on_chain === true ? 'active': ''}">
+      <Typewriter>
+        <h1>{$diagnosis}</h1>
+      </Typewriter>      
     </div>
 
     <div class="logo">
@@ -346,6 +368,21 @@ import {
     }
 }
 
+.engine-diagnosis {
+  display: none;
+}
+.engine-diagnosis.active {
+  position: absolute;
+  top: 65%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: block;
+  color: grey;
+  font-size: 10px;
+  text-align: center;
+}
+
+
 .logo {
   margin: 5vh auto;
   margin-top: 10vh;
@@ -364,11 +401,13 @@ import {
   display: none;
 }
 .info-box.active {
+  width: 95vw;
   color: grey;
   padding: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin: 0 auto;
 }
 .info-box .info {
   display: flex;
@@ -379,6 +418,11 @@ import {
 .info-box img {
   height: 5vh;
   width: 5vh;
+}
+@media screen and (max-width: 820px) {
+  .info-box.active {
+    
+  }
 }
 @media screen and (max-width: 480px) {
   .info-box.active {

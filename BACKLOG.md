@@ -1,9 +1,6 @@
 ------MVP-----------------
 DONE!
 --------Marketing---------------
-- twitter accoount
-- annoucement on telegraph groups
-- make movie as instruction how to use tool
 
 ------TASKS-----------------------------
 - update blog
@@ -24,7 +21,6 @@ export async function rpc_getProvidedLiquidity(
 -        if (log_on_contract === null || event === null) return null;
 +        if (log_on_contract === null || event === null) continue;
 
-- czy twój kod na pewno jest asynchroniczy?
 - implement autoformatter
 - implement pre-commit
 - fix typescript errors
@@ -32,6 +28,7 @@ export async function rpc_getProvidedLiquidity(
 - implement tests
 - advanced debugging
 ------PERFORMANCE IDEAS------------------
+- czy twój kod na pewno jest asynchroniczy?
 - make contract creation at the beggining in one place before user type account
 - make some optimal indexed data structure for storing interface fragments to avoid expensive iteration
 - use switch instead of multiple if statement

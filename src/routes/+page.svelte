@@ -149,32 +149,32 @@ import {
     if ($debug) console.debug("🔗 start collecting on chain data... 🔗");
     on_chain = true;
 
-    $diagnosis = "🪙 collecting wallet tokens...";
-    const tokens = await account_getUserWalletTokensData(user_address); // tokens which is not stored in farms
+    const tokens_promise = account_getUserWalletTokensData(user_address); // tokens which is not stored in farms
+    const LP_tokens_promise = account_getUserWalletLPsData(user_address); // lp tokens which is not stored in farms
 
-    $diagnosis = "🪙 collecting LP tokens which are not staked...";
-    const LP_tokens = await account_getUserWalletLPsData(user_address); // lp tokens which is not stored in farms
-
-    $diagnosis = "👨‍🌾 collecting farms data from masterchef...";
-    const masterchef_data = await account_masterChefUserFarmsData(user_address); // farms data where user is participated
+    const masterchef_data_promise = account_masterChefUserFarmsData(user_address); // farms data where user is participated
 
     const user_tx = await fetch(`api/user_tx?address=${user_address}`);
     const user_tx_json = await user_tx.json();
     const user_txs = user_tx_json.user_tx;
 
+    $diagnosis = "👨‍🌾 collecting farms data from masterchef...";
+    const masterchef_data = await masterchef_data_promise;
+
     $diagnosis = "📜 collecting reciepts related to user account...";
     const pools_receipts = await account_getRelevantReciepts(masterchef_data, user_txs);
 
-    $diagnosis = "👉 collecting provided liquidity by the user...";
-    const prov_liquidities = await account_getUserProvidedLiquidity(masterchef_data, pools_receipts, user_address);
+    const prov_liquidities_promise = account_getUserProvidedLiquidity(masterchef_data, pools_receipts, user_address);
+
+    $diagnosis = "📈 calculate user wallet value and ⛽ gas consumption...";
+    const gas_pls_cost = calc_gasConsumption(pools_receipts);
 
     $diagnosis = "⌚ collecting first liquidity timestamps...";
     const first_liquidity_timestamps = account_getFirstLiquidityTimestamp(masterchef_data, pools_receipts);
 
-    $diagnosis = "📈 calculate user wallet value and ⛽ gas consumption...";
-    const wallet = calc_userWalletValue(tokens, $prices);
-    const gas_pls_cost = calc_gasConsumption(pools_receipts);
-  
+    $diagnosis = "👉 collecting provided liquidity by the user...";
+    const prov_liquidities = await prov_liquidities_promise;
+
     $diagnosis = "📚 collecting gather data to data batch...";
     const data_batches = account_collectDataBatch(
       masterchef_data, 
@@ -182,6 +182,13 @@ import {
       gas_pls_cost, 
       first_liquidity_timestamps
     );
+
+    $diagnosis = "🪙 collecting wallet tokens...";
+    const tokens = await tokens_promise;
+    const wallet = calc_userWalletValue(tokens, $prices);
+
+    $diagnosis = "🪙 collecting LP tokens which are not staked...";
+    const LP_tokens = await LP_tokens_promise;
 
     $user.user_address = user_address;
     $user.tokens = tokens;
@@ -191,27 +198,33 @@ import {
 
     // TODO: for now every interval we recalculate everything - find more efficient way to do this
     user_data_update_timer = setInterval(async () => {
-      const tokens = await account_getUserWalletTokensData(user_address); // tokens which is not stored in farms
-      const LP_tokens = await account_getUserWalletLPsData(user_address); // lp tokens which is not stored in farms
-      const masterchef_data = await account_masterChefUserFarmsData(user_address); // farms data where user is participated
+      const tokens_promise = account_getUserWalletTokensData(user_address); // tokens which is not stored in farms
+      const LP_tokens_promise = account_getUserWalletLPsData(user_address); // lp tokens which is not stored in farms
+
+      const masterchef_data_promise = account_masterChefUserFarmsData(user_address); // farms data where user is participated
 
       const user_tx = await fetch(`api/user_tx?address=${user_address}`);
       const user_tx_json = await user_tx.json();
       const user_txs = user_tx_json.user_tx;
 
+      const masterchef_data = await masterchef_data_promise;
       const pools_receipts = await account_getRelevantReciepts(masterchef_data, user_txs);
-      const prov_liquidities = await account_getUserProvidedLiquidity(masterchef_data, pools_receipts, user_address);
-      const first_liquidity_timestamps = account_getFirstLiquidityTimestamp(masterchef_data, pools_receipts);
 
-      const wallet = calc_userWalletValue(tokens, $prices);
+      const prov_liquidities_promise = account_getUserProvidedLiquidity(masterchef_data, pools_receipts, user_address);
       const gas_pls_cost = calc_gasConsumption(pools_receipts);
-    
+      const first_liquidity_timestamps = account_getFirstLiquidityTimestamp(masterchef_data, pools_receipts);
+      const prov_liquidities = await prov_liquidities_promise;
+
       const data_batches = account_collectDataBatch(
         masterchef_data, 
         prov_liquidities, 
         gas_pls_cost, 
         first_liquidity_timestamps
       );
+
+      const tokens = await tokens_promise;
+      const wallet = calc_userWalletValue(tokens, $prices);
+      const LP_tokens = await LP_tokens_promise;
 
       $user.user_address = user_address;
       $user.tokens = tokens;
@@ -221,6 +234,8 @@ import {
     }, 60000);
 
     on_chain = false;
+
+    // maybe if all promises are resolved then call it:
     data_collected = true;
 
     performance_t2 = performance.now()

@@ -6,6 +6,7 @@ import {
     lp_token_contracts_lookup,
     all_contracts_lookup,
     protocol_contracts,
+    masterchef_pid_to_address_lookup
 } from '../../constants';
 import type {Farm, Token, Receipt, MasterChefData, Liquidity} from '../../types'
 
@@ -195,7 +196,8 @@ async function _validate_signature(
   if (input.fragment.name === 'deposit') {
       // deposit request from my address to master_chef contract | text signature: deposit(uint256,uint256) | function deposit(uint256 _pid, uint256 _amount) public {}
       const pid = input.args['0'];
-      const LP_addr_from_pid = await _getPairAddress(pid);
+      // const LP_addr_from_pid = await _getPairAddress(pid);
+      const LP_addr_from_pid = _getPairAddress(pid);
       if (lp_token_contracts_lookup[LP_addr_from_pid.toLowerCase()] !== 
           lp_token_contracts_lookup[pool_address.toLowerCase()]) 
       {
@@ -206,7 +208,8 @@ async function _validate_signature(
     if (input.fragment.name === 'withdraw') {
       // withdraw request from my address to master_chef contract | text signature: withdraw(uint256,uint256) | function withdraw(uint256 _pid, uint256 _amount) public {}
       const pid = input.args['0'];
-      const LP_addr_from_pid = await _getPairAddress(pid);
+      // const LP_addr_from_pid = await _getPairAddress(pid);
+      const LP_addr_from_pid = _getPairAddress(pid);
       if (lp_token_contracts_lookup[LP_addr_from_pid.toLowerCase()] !== 
           lp_token_contracts_lookup[pool_address.toLowerCase()]) 
       {
@@ -294,10 +297,14 @@ export async function rpc_getUserPoolReceipts(farm: Farm, pool_address: string, 
     return receipts;
 }
 
-async function _getPairAddress(pid: string) {
-  const master_chef_c = new ethers.Contract(protocol_contracts['PULSE_X_MASTER_CHEF'], abis.PULSE_X_MASTER_CHEF, provider);
-  const pairAddress = await master_chef_c.poolInfo(pid);
-  return pairAddress.lpToken;
+// for performance reason it is hardcoded in constants
+// async function _getPairAddress(pid: string) {
+//   const master_chef_c = new ethers.Contract(protocol_contracts['PULSE_X_MASTER_CHEF'], abis.PULSE_X_MASTER_CHEF, provider);
+//   const pairAddress = await master_chef_c.poolInfo(pid);
+//   return pairAddress.lpToken;
+// }
+function _getPairAddress(pid: string) {
+  return masterchef_pid_to_address_lookup[pid];
 }
 
 export async function rpc_getProvidedLiquidity(

@@ -16,6 +16,7 @@
     let current_ratio = Number(formatUnits(data.farm.LP_tokens_distribution[data.farm.token_A_symbol], 18)) / Number(formatUnits(data.farm.LP_tokens_distribution[data.farm.token_B_symbol], 18))
 
     function _normalize(ratio) {
+      ratio = Math.abs(ratio);
       if (ratio > 1) {
         return ratio
       }

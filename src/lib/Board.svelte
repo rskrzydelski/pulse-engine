@@ -6,11 +6,11 @@
     import { PricesCls, prices } from '../store';
     import { getUIFormatFromBigInt, getUIFormatNumber } from '../utils'
 
-    export let data;
-
+    export let data
+  
     let price = new PricesCls();
-    const unsubscribe_price = prices.subscribe((obj) => price = obj);
-    onDestroy(unsubscribe_price);
+    const unsubscribe_price = prices.subscribe((obj) => price = obj)
+      onDestroy(unsubscribe_price);
 
     let init_ratio = Number(formatUnits(data.provided_liquidity[data.farm.token_A_symbol], 18)) / Number(formatUnits(data.provided_liquidity[data.farm.token_B_symbol], 18))
     let current_ratio = Number(formatUnits(data.farm.LP_tokens_distribution[data.farm.token_A_symbol], 18)) / Number(formatUnits(data.farm.LP_tokens_distribution[data.farm.token_B_symbol], 18))

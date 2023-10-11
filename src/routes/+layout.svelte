@@ -140,9 +140,6 @@
         justify-content: center;
         margin: 0 auto;
     }
-    .coffee img {
-        /* max-height: 5vh; */
-    }
 
     .container {
         display: flex;
